@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -9,7 +10,39 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String dropdownValue;
-  List<Widget> newList = ListConverter().convertList(currenciesList);
+  List<Widget> cupertinoList = ListConverter().convertList(currenciesList);
+
+  DropdownButton<String> androidDropdown() {
+    return DropdownButton<String>(
+      icon: Icon(Icons.arrow_drop_down),
+      value: dropdownValue,
+      items: currenciesList.map<DropdownMenuItem<String>>((value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      //? Why do I need to create a new variable here for the UI to update with the new value?
+      //? Using only dropdownValue still prints the updated value, but it doesn't show in the screen.
+      onChanged: (value) {
+        setState(() {
+          dropdownValue = value;
+          print(dropdownValue);
+        });
+      },
+    );
+  }
+
+  CupertinoPicker iOSPicker() {
+    return CupertinoPicker(
+      itemExtent: 24,
+      onSelectedItemChanged: (value) {
+        Text text = cupertinoList[value];
+        print(text.data);
+      },
+      children: cupertinoList,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,36 +80,10 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: CupertinoPicker(
-              itemExtent: 24,
-              onSelectedItemChanged: (value) {
-                Text text = newList[value];
-                print(text.data);
-              },
-              children: newList,
-            ),
+            child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],
       ),
     );
   }
 }
-
-// DropdownButton<String>(
-//               icon: Icon(Icons.arrow_drop_down),
-//               value: dropdownValue,
-//               items: currenciesList.map<DropdownMenuItem<String>>((value) {
-//                 return DropdownMenuItem<String>(
-//                   value: value,
-//                   child: Text(value),
-//                 );
-//               }).toList(),
-//               //? Why do I need to create a new variable here for the UI to update with the new value?
-//               //? Using only dropdownValue still prints the updated value, but it doesn't show in the screen.
-//               onChanged: (value) {
-//                 setState(() {
-//                   dropdownValue = value;
-//                   print(dropdownValue);
-//                 });
-//               },
-//             ),
