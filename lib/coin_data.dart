@@ -1,4 +1,21 @@
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+
+String apiKey = '4535D1F8-336F-45CB-AB97-8B30D6B7D876';
+String url = 'https://rest.coinapi.io/v1/exchangerate/BTC/USD';
+
+class CoinData {
+  Future getCoinData() async {
+    http.Response response = await http.get(url,
+      headers: {'X-CoinAPI-Key': apiKey},
+    );
+    if (response.statusCode == 200) {
+      print(response.body);
+    } else {
+      print(response.statusCode);
+    }
+  }
+}
 
 const List<String> currenciesList = [
   'AUD',
@@ -39,5 +56,3 @@ class ListConverter {
     return newList;
   }
 }
-
-class CoinData {}

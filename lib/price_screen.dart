@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
+//This is for the platform checker for the currency picker widget.
 import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
@@ -9,7 +10,7 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String dropdownValue;
+  String dropdownValue = 'USD';
   List<Widget> cupertinoList = ListConverter().convertList(currenciesList);
 
   DropdownButton<String> androidDropdown() {
@@ -74,6 +75,13 @@ class _PriceScreenState extends State<PriceScreen> {
                 ),
               ),
             ),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              print('Tapped');
+              await CoinData().getCoinData();
+            },
+            child: Text('Print Conversion'),
           ),
           Container(
             height: 150.0,
