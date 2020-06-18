@@ -10,13 +10,16 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String dropdownValue = 'USD';
+  String quoteCurrency = 'USD';
+  CoinData coinData = CoinData();
+  double conversionRate;
+
   List<Widget> cupertinoList = ListConverter().convertList(currenciesList);
 
   DropdownButton<String> androidDropdown() {
     return DropdownButton<String>(
       icon: Icon(Icons.arrow_drop_down),
-      value: dropdownValue,
+      value: quoteCurrency,
       items: currenciesList.map<DropdownMenuItem<String>>((value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -25,10 +28,12 @@ class _PriceScreenState extends State<PriceScreen> {
       }).toList(),
       //? Why do I need to create a new variable here for the UI to update with the new value?
       //? Using only dropdownValue still prints the updated value, but it doesn't show in the screen.
-      onChanged: (value) {
+      onChanged: (value) async {
+        await coinData.getCoinData('BTC', value);
         setState(() {
-          dropdownValue = value;
-          print(dropdownValue);
+          quoteCurrency = value;
+          print(quoteCurrency);
+          conversionRate = coinData.conversionRate;
         });
       },
     );
@@ -66,7 +71,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? USD',
+                  '1 BTC = $conversionRate $quoteCurrency',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -79,7 +84,6 @@ class _PriceScreenState extends State<PriceScreen> {
           RaisedButton(
             onPressed: () async {
               print('Tapped');
-              await CoinData().getCoinData();
             },
             child: Text('Print Conversion'),
           ),
